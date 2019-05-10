@@ -29,6 +29,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.14.11"
+  common_utils:
+    dependency: "direct main"
+    description:
+      name: common_utils
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.1.1"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -36,6 +43,20 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.1.2"
+  decimal:
+    dependency: transitive
+    description:
+      name: decimal
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.3.3"
+  flustars:
+    dependency: "direct main"
+    description:
+      name: flustars
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.2.5"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -88,6 +109,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.0.1"
+  rational:
+    dependency: transitive
+    description:
+      name: rational
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.3.4"
   scoped_model:
     dependency: "direct main"
     description:
@@ -135,6 +163,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.0.4"
+  synchronized:
+    dependency: transitive
+    description:
+      name: synchronized
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "2.1.0"
   term_glyph:
     dependency: transitive
     description:

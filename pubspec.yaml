@@ -23,6 +23,11 @@ dependencies:
   scoped_model: ^1.0.1
   shared_preferences: ^0.4.3
   fluttertoast: ^2.2.11
+   # Dart 常用工具类库 https://github.com/Sky24n/common_utils
+  common_utils: ^1.1.1
+   # Flutter 常用工具类库 https://github.com/Sky24n/flustars
+  flustars: ^0.2.5
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
