@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:mylove/constant/theme.dart';
 import 'package:mylove/generated/i18n.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:mylove/model/state_model/main_state_model.dart';
 import 'package:mylove/page/home/home_page.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -52,6 +52,8 @@ class _AppState extends State<App> {
                 GlobalWidgetsLocalizations.delegate
               ],
               supportedLocales: S.delegate.supportedLocales,
+              localeResolutionCallback: S.delegate.resolution(
+                  fallback: const Locale('en', '')),
               home: HomePage(),
               // onGenerateRoute: Application.router.generator,
             );
