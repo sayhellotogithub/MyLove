@@ -19,11 +19,19 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   dynamic subscription;
   MainStateModel mainStateModel;
+  Locale _locale = const Locale('en', '');
+
+  Function(Locale) localeChange;
 
   @override
   void initState() {
     super.initState();
     mainStateModel = MainStateModel();
+    localeChange = (locale) {
+      setState(() {
+        _locale = locale;
+      });
+    };
 //    Application.eventBus = EventBus();
 //    final Router router = Router();
 //    Routes.configureRoutes(router);
@@ -52,9 +60,14 @@ class _AppState extends State<App> {
                 GlobalWidgetsLocalizations.delegate
               ],
               supportedLocales: S.delegate.supportedLocales,
-              localeResolutionCallback: S.delegate.resolution(
-                  fallback: const Locale('en', '')),
-              home: HomePage(),
+//              localeResolutionCallback: S.delegate.resolution(
+//                  fallback: const Locale('en', '')),
+
+              home: Localizations.override(
+                context: context,
+                locale: _locale,
+                child: HomePage(),
+              ),
               // onGenerateRoute: Application.router.generator,
             );
           },
