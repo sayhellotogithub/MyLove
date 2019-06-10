@@ -32,6 +32,8 @@ class _AppState extends State<App> {
         _locale = locale;
       });
     };
+    //在其它地方调用切换语言
+    localeChange(Locale('zh', ''));
 //    Application.eventBus = EventBus();
 //    final Router router = Router();
 //    Routes.configureRoutes(router);
@@ -63,11 +65,10 @@ class _AppState extends State<App> {
 //              localeResolutionCallback: S.delegate.resolution(
 //                  fallback: const Locale('en', '')),
 
-              home: Localizations.override(
-                context: context,
-                locale: _locale,
-                child: HomePage(),
-              ),
+              home: Builder(builder: (BuildContext context) {
+                return Localizations.override(
+                    context: context, locale: _locale, child: HomePage());
+              },),
               // onGenerateRoute: Application.router.generator,
             );
           },
