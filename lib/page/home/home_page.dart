@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mylove/constant/index_tab.dart';
+import 'package:mylove/generated/i18n.dart';
 import 'package:mylove/model/state_model/tab_state_model.dart';
 import 'package:scoped_model/scoped_model.dart';
 
@@ -40,7 +41,7 @@ class HomePageState extends State<HomePage>
     if (nowExitTime - lastExitTime > 2000) {
       lastExitTime = nowExitTime;
       Fluttertoast.showToast(
-          msg: "再按一次退出程序",
+          msg: S.of(context).press_again_exit,
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIos: 1,
