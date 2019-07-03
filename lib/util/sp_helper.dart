@@ -1,7 +1,7 @@
-import 'package:flustars/flustars.dart';
 import 'package:mylove/constant/common.dart';
 import 'package:mylove/model/splash_model.dart';
 import 'package:mylove/model/version_model.dart';
+import 'package:mylove/util/sp_util.dart';
 
 class SpHelper {
   /// T 用于区分存储类型

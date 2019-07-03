@@ -1,0 +1,2 @@
+
+class MyImageListener implements ImageListener{}
