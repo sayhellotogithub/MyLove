@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:mylove/config/application.dart';
 import 'package:mylove/constant/theme.dart';
+import 'package:mylove/eventbus/event_bus.dart';
 import 'package:mylove/generated/i18n.dart';
 import 'package:mylove/model/state_model/main_state_model.dart';
 import 'package:mylove/page/splash_page.dart';
+import 'package:mylove/route/router.dart';
+import 'package:mylove/route/routes.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 
@@ -34,10 +38,10 @@ class _AppState extends State<App> {
     };
     //在其它地方调用切换语言
     localeChange(Locale('zh', ''));
-//    Application.eventBus = EventBus();
-//    final Router router = Router();
-//    Routes.configureRoutes(router);
-//    Application.router = router;
+    Application.eventBus = EventBus();
+    final Router router = Router();
+    Routes.configureRoutes(router);
+    Application.router = router;
 //    TimeUtil.initLocaleLanguage();
 //    initListener();
   }

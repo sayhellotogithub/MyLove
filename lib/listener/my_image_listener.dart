@@ -1,2 +1,1 @@
-
-class MyImageListener implements ImageListener{}
+class MyImageListener {}

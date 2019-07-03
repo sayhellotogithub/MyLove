@@ -2,12 +2,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:flukit/flukit.dart';
 import 'package:flutter/material.dart';
+import 'package:mylove/config/application.dart';
 import 'package:mylove/constant/common.dart';
 import 'package:mylove/model/splash_model.dart';
 import 'package:mylove/res/color_constant.dart';
+import 'package:mylove/route/routes.dart';
 import 'package:mylove/util/http_util.dart';
 import 'package:mylove/util/image_util.dart';
-import 'package:mylove/util/navigator_util.dart';
 import 'package:mylove/util/sp_helper.dart';
 import 'package:mylove/util/sp_util.dart';
 import 'package:rxdart/rxdart.dart';
@@ -254,7 +255,8 @@ class SplashPageState extends State<SplashPage> {
   }
 
   void _goMain() {
-    NavigatorUtil.navigatorToMain(context);
+    //NavigatorUtil.navigatorToMain(context);
+    Application.navigateTo(context: context, route: "${Routes.HOME_PAGE}");
   }
 
   @override
