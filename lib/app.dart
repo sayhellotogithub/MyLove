@@ -6,9 +6,9 @@ import 'package:mylove/eventbus/event_bus.dart';
 import 'package:mylove/generated/i18n.dart';
 import 'package:mylove/model/state_model/main_state_model.dart';
 import 'package:mylove/page/loading_page.dart';
-import 'package:mylove/page/splash_page.dart';
 import 'package:mylove/route/router.dart';
 import 'package:mylove/route/routes.dart';
+import 'package:mylove/util/sp_util.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 
@@ -39,6 +39,7 @@ class _AppState extends State<App> {
     };
     //在其它地方调用切换语言
     localeChange(Locale('zh', ''));
+    SpUtil.getInstance();
     Application.eventBus = EventBus();
     final Router router = Router();
     Routes.configureRoutes(router);

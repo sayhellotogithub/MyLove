@@ -7,13 +7,13 @@ class Routes {
   static const String HOME_PAGE = "home/HomePage";
   static const String MAIN_PAGE = "mainPage";
   static const String SPLASH_PAGE = "splashPage";
+  static const String BOOT_PAGE = "bootPage";
 
   static void configureRoutes(Router router) {
     router.define(MAIN_PAGE, handler: mainRouteHandler);
     router.define(HOME_PAGE, handler: homeRouteHandler);
     router.define(SPLASH_PAGE, handler: splashRouteHandler);
-//    router.define(webview, handler: webviewRouteHandler);
-//    router.define(videoDetail, handler: videoDetailRouteHandler);
+    router.define(BOOT_PAGE, handler: bootRouteHandler);
 
     router.notFoundHandler = Handler(
         handlerFunc: (BuildContext context, Map<String, List<String>> params) {

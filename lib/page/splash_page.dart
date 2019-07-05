@@ -1,15 +1,11 @@
 import 'package:common_utils/common_utils.dart';
-import 'package:flukit/flukit.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intro_slider/intro_slider.dart';
 import 'package:mylove/config/application.dart';
 import 'package:mylove/constant/color_constant.dart';
 import 'package:mylove/constant/common.dart';
-import 'package:mylove/model/splash_model.dart';
 import 'package:mylove/route/routes.dart';
-import 'package:mylove/util/image_util.dart';
 import 'package:mylove/util/sp_util.dart';
-import 'package:rxdart/rxdart.dart';
 
 ///
 /// splash界面
@@ -27,106 +23,95 @@ class SplashPage extends StatefulWidget {
 
 class SplashPageState extends State<SplashPage> {
   TimerUtil _timerUtil;
-  SplashModel _splashModel;
-  int _status = 0;
   int _count = 3;
-  List<Widget> _bannerList = new List();
-
-  //引导页图片资源
-  List<String> _guideList = [
-    ImageUtil.getImgPath('icon_guide_1'),
-    ImageUtil.getImgPath('icon_guide_2'),
-    ImageUtil.getImgPath('icon_guide_3')
-  ];
+  List<Slide> slides = new List();
 
   @override
   void initState() {
     super.initState();
-    _initAsync();
-  }
-
-  Widget _buildSplashBg() {
-    return new Image.asset(
-      ImageUtil.getImgPath('splash'),
-      width: double.infinity,
-      fit: BoxFit.fill,
-      height: double.infinity,
+    slides.add(
+      new Slide(
+        title: "Flutter",
+        description:
+        "Flutter是谷歌的移动UI框架，可以快速在iOS和Android上构建高质量的原生用户界面。 Flutter可以与现有的代码一起工作。在全世界，Flutter正在被越来越多的开发者和组织使用，并且Flutter是完全免费、开源的。",
+        styleDescription: TextStyle(
+            color: Colors.white,
+            fontSize: 20.0,
+            fontFamily: 'Raleway'),
+        marginDescription: EdgeInsets.only(
+            left: 20.0, right: 20.0, top: 20.0, bottom: 70.0),
+        colorBegin: Color(0xffFFDAB9),
+        colorEnd: Color(0xff40E0D0),
+        directionColorBegin: Alignment.topLeft,
+        directionColorEnd: Alignment.bottomRight,
+      ),
     );
-  }
 
-  @override
-  Widget build(BuildContext context) {
-    return new Material(
-      child: new Stack(
-        children: <Widget>[
-          new Offstage(
-            offstage: !(_status == 0),
-            child: _buildSplashBg(),
-          ),
-          new Offstage(
-            offstage: !(_status == 2),
-            child: ObjectUtil.isEmpty(_bannerList)
-                ? new Container()
-                : new Swiper(
-                autoStart: false,
-                circular: false,
-                indicator: CircleSwiperIndicator(
-                  radius: 4.0,
-                  padding: EdgeInsets.only(bottom: 30.0),
-                  itemColor: Colors.black26,
-                ),
-                children: _bannerList),
-          ),
-          new Offstage(
-            offstage: !(_status == 1),
-            child: new Container(
-              alignment: Alignment.bottomRight,
-              margin: EdgeInsets.all(20.0),
-              child: InkWell(
-                onTap: () {
-                  _goMain();
-                },
-                child: new Container(
-                    padding: EdgeInsets.all(12.0),
-                    child: new Text(
-                      '跳过 $_count',
-                      style: new TextStyle(
-                          fontSize: 14.0, color: Colors.white),
-                    ),
-                    decoration: new BoxDecoration(
-                        color: Color(0x66000000),
-                        borderRadius: BorderRadius.all(Radius.circular(4.0)),
-                        border: new Border.all(
-                            width: 0.33, color: ColorConstant.divider))),
-              ),
-            ),
-          )
-        ],
+    slides.add(
+      new Slide(
+        title: "iblogstreet",
+        description:
+        "这是一款使用Flutter写的iblogstreet客户端应用，在Android和IOS都完美运行,可以用来入门Flutter，简单明了，适合初学者,项目完全开源，如果本项目确实能够帮助到你学习Flutter，谢谢start，有问题请提交Issues,我会及时回复。",
+        styleDescription: TextStyle(
+            color: Colors.white,
+            fontSize: 20.0,
+            fontFamily: 'Raleway'),
+        marginDescription: EdgeInsets.only(
+            left: 20.0, right: 20.0, top: 20.0, bottom: 70.0),
+        colorBegin: Color(0xffFFFACD),
+        colorEnd: Color(0xffFF6347),
+        directionColorBegin: Alignment.topLeft,
+        directionColorEnd: Alignment.bottomRight,
+      ),
+    );
+
+    slides.add(
+      new Slide(
+        title: "Welcome",
+        description:
+        "赠人玫瑰，手有余香；\n分享技术，传递快乐。",
+        styleDescription: TextStyle(
+            color: Colors.white,
+            fontSize: 20.0,
+            fontFamily: 'Raleway'),
+        marginDescription: EdgeInsets.only(
+            left: 20.0, right: 20.0, top: 20.0, bottom: 70.0),
+        colorBegin: Color(0xffFFA500),
+        colorEnd: Color(0xff7FFFD4),
+        directionColorBegin: Alignment.topLeft,
+        directionColorEnd: Alignment.bottomRight,
       ),
     );
   }
 
-  Future _initAsync() async {
-    await SpUtil.getInstance();
-    Observable.just(1).delay(new Duration(milliseconds: 1000)).listen((_) {
-      if (SpUtil.getBool(Constant.key_guide, defValue: true) &&
-          ObjectUtil.isNotEmpty(_guideList)) {
-        SpUtil.putBool(Constant.key_guide, false);
-        _initBanner();
-      } else {
-        _initSplash();
-      }
-    });
+  void onDonePress() {
+    _setHasSkip();
+    _goMain();
   }
 
-  void _initSplash() {
-    _doCountDown();
+  void onSkipPress() {
+    _setHasSkip();
+    _goMain();
   }
+
+  void _setHasSkip() {
+    SpUtil.putBool(Constant.has_skip, true);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return IntroSlider(
+      slides: this.slides,
+      onDonePress: this.onDonePress,
+      //renderSkipBtn: this.onSkipPress,
+      nameSkipBtn: "跳过",
+      nameNextBtn: "下一页",
+      nameDoneBtn: "进入",
+    );
+  }
+
 
   void _doCountDown() {
-    setState(() {
-      _status = 1;
-    });
     _timerUtil = new TimerUtil(mTotalTime: _count * 1000);
     _timerUtil.setOnTimerTickCallback((int tick) {
       double _tick = tick / 1000;
@@ -140,66 +125,9 @@ class SplashPageState extends State<SplashPage> {
     _timerUtil.startCountDown();
   }
 
-  void _initBanner() {
-    _initBannerData();
-    setState(() {
-      _status = 2;
-    });
-  }
-
-  /**
-   * 初始化Banner数据
-   */
-  void _initBannerData() {
-    for (int i = 0, length = _guideList.length; i < length; i++) {
-      if (i == length - 1) {
-        _bannerList.add(new Stack(
-          children: <Widget>[
-            new Image.asset(
-              _guideList[i],
-              fit: BoxFit.fill,
-              width: double.infinity,
-              height: double.infinity,
-            ),
-            new Align(
-              alignment: Alignment.bottomCenter,
-              child: new Container(
-                margin: EdgeInsets.only(bottom: 160.0),
-                child: new InkWell(
-                  onTap: () {
-                    Fluttertoast.showToast(msg: "click");
-                    _goMain();
-                  },
-                  child: new CircleAvatar(
-                    radius: 48.0,
-                    backgroundColor: Colors.indigoAccent,
-                    child: new Padding(
-                      padding: EdgeInsets.all(2.0),
-                      child: new Text(
-                        '立即体验',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white, fontSize: 16.0),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ));
-      } else {
-        _bannerList.add(new Image.asset(
-          _guideList[i],
-          fit: BoxFit.fill,
-          width: double.infinity,
-          height: double.infinity,
-        ));
-      }
-    }
-  }
-
   void _goMain() {
-    Application.navigateTo(context: context, route: "${Routes.MAIN_PAGE}");
+    Application.navigateTo(
+        context: context, route: Routes.MAIN_PAGE, clearStack: true);
   }
 
   @override

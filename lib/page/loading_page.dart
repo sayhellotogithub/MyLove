@@ -2,9 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:mylove/config/application.dart';
+import 'package:mylove/constant/common.dart';
 import 'package:mylove/route/routes.dart';
 import 'package:mylove/util/image_util.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:mylove/util/sp_util.dart';
 
 //加载页面
 class LoadingPage extends StatefulWidget {
@@ -24,9 +25,15 @@ class _LoadingState extends State<LoadingPage> {
   }
 
   void _getHasSkip() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool hasSkip = prefs.getBool("hasSkip");
-    if (hasSkip == null || !hasSkip) {
+    bool keyGuide = SpUtil.getBool(
+        Constant.has_skip_key_guide, defValue: false);
+    if (!keyGuide) {
+      Application.navigateTo(
+          context: context, route: Routes.BOOT_PAGE, clearStack: true);
+      return;
+    }
+    bool hasSkip = SpUtil.getBool(Constant.has_skip, defValue: false);
+    if (!hasSkip) {
       Application.navigateTo(
           context: context, route: Routes.SPLASH_PAGE, clearStack: true);
     } else {

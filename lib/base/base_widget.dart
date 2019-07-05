@@ -22,8 +22,8 @@ abstract class BaseWidgetState<T extends BaseWidget> extends State<T> {
 
   bool _isErrorWidgetShow = false; //错误信息是否显示
   String _errorContentMesage = "网络请求失败，请检查您的网络";
-  String _errorImgName = "ic_error.png";
-  String _emptyImgName = "ic_empty.png";
+  String _errorImgName = "ic_error";
+  String _emptyImgName = "ic_empty";
 
   bool _isLoadingWidgetShow = false;
 
