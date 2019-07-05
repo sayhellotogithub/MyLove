@@ -1,156 +1,242 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:mylove/constant/index_tab.dart';
-import 'package:mylove/generated/i18n.dart';
-import 'package:mylove/model/state_model/tab_state_model.dart';
-import 'package:scoped_model/scoped_model.dart';
+import 'package:mylove/base/base_widget.dart';
+import 'package:mylove/componment/webview_page.dart';
+import 'package:mylove/http/api_service.dart';
+import 'package:mylove/model/article_model.dart';
+import 'package:mylove/page/home/banner.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends BaseWidget {
   @override
-  State<StatefulWidget> createState() {
+  BaseWidgetState<BaseWidget> getState() {
     return HomePageState();
   }
 }
 
-class HomePageState extends State<HomePage>
-    with AutomaticKeepAliveClientMixin<HomePage> {
-  static int lastExitTime = 0;
-  TabBarStateModel tabBarStateModel;
+class HomePageState extends BaseWidgetState<HomePage> {
+  List<Article> _datas = new List();
+  //listview控制器
+  ScrollController _scrollController = ScrollController();
+  bool showToTopBtn = false; //是否显示“返回到顶部”按钮
+  int _page = 0;
 
-  @override
-  bool get wantKeepAlive => true;
 
   @override
   void initState() {
     super.initState();
-    tabBarStateModel = TabBarStateModel();
+    setAppBarVisible(false);
+
+    getData();
+    _scrollController.addListener(() {
+      //滑到了底部，加载更多
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        _getMore();
+      }
+
+      //当前位置是否超过屏幕高度
+      if (_scrollController.offset < 200 && showToTopBtn) {
+        setState(() {
+          showToTopBtn = false;
+        });
+      } else if (_scrollController.offset >= 200 && showToTopBtn == false) {
+        setState(() {
+          showToTopBtn = true;
+        });
+      }
+    });
   }
 
-  /**
-   * 自定义返回键事件
-   * 一定时间内点击两次退出，反之提示
-   */
-  Future<bool> _onBackPressed() async {
-    if (tabBarStateModel.tabBarCurrentIndex != 0) {
-      tabBarStateModel.changeTabBarCurrentIndex(0);
-      return await Future.value(false);
-    }
-    int nowExitTime = DateTime
-        .now()
-        .millisecondsSinceEpoch;
-    if (nowExitTime - lastExitTime > 2000) {
-      lastExitTime = nowExitTime;
-      Fluttertoast.showToast(
-          msg: S.of(context).press_again_exit,
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIos: 1,
-          backgroundColor: Theme
-              .of(context)
-              .primaryColor,
-          textColor: Colors.white,
-          fontSize: 16.0
-      );
-      return await Future.value(false);
-    }
-    return await Future.value(true);
+  //获取文章列表数据
+  Future<Null> getData() async {
+    _page = 0;
+    ApiService().getArticleList((ArticleModel _articleModel) {
+      if (_articleModel.errorCode == 0) {
+        //成功
+        if (_articleModel.data.datas.length > 0) {
+          //有数据
+          showContent();
+          setState(() {
+            _datas.clear();
+            _datas.addAll(_articleModel.data.datas);
+          });
+        } else {
+          //数据为空
+          showEmpty();
+        }
+      } else {
+        Fluttertoast.showToast(msg: _articleModel.errorMsg);
+      }
+    }, (DioError error) {
+      //发生错误
+      print(error.response);
+      setState(() {
+        showError();
+      });
+    }, _page);
+  }
+
+  //加载更多的数据
+  Future<Null> _getMore() async {
+    _page++;
+    ApiService().getArticleList((ArticleModel _articleModel) {
+      if (_articleModel.errorCode == 0) {
+        //成功
+        if (_articleModel.data.datas.length > 0) {
+          //有数据
+          showContent();
+          setState(() {
+            _datas.addAll(_articleModel.data.datas);
+          });
+        } else {
+          //数据为空
+          Fluttertoast.showToast(msg: "没有更多数据了");
+        }
+      } else {
+        Fluttertoast.showToast(msg: _articleModel.errorMsg);
+      }
+    }, (DioError error) {
+      //发生错误
+      print(error.response);
+      setState(() {
+        showError();
+      });
+    }, _page);
   }
 
   @override
-  Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onBackPressed,
-      child: ScopedModel<TabBarStateModel>(
-        model: tabBarStateModel,
-        child: ScopedModelDescendant<TabBarStateModel>(
-          builder: (context, child, model) {
-            return Scaffold(
-              body: _renderTabContent(model),
-              bottomNavigationBar: _renderBottomNavigationBar(model),
-            );
-          },
-        ),
+  AppBar getAppBar() {
+    return AppBar(
+      title: Text("不显示"),
+    );
+  }
+
+  @override
+  Widget getContentWidget(BuildContext context) {
+    return Scaffold(
+      body: RefreshIndicator(
+        displacement: 15,
+        onRefresh: getData,
+        child: ListView.separated(
+            itemBuilder: _renderRow,
+            physics: new AlwaysScrollableScrollPhysics(),
+            separatorBuilder: (BuildContext context, int index) {
+              return Container(
+                height: 0.5,
+                color: Colors.black26,
+              );
+            },
+            controller: _scrollController,
+            //包含轮播图和加载更多
+            itemCount: _datas.length + 2),
       ),
+      floatingActionButton: !showToTopBtn
+          ? null
+          : FloatingActionButton(
+          child: Icon(Icons.arrow_upward),
+          onPressed: () {
+            //返回到顶部时执行动画
+            _scrollController.animateTo(.0,
+                duration: Duration(milliseconds: 200), curve: Curves.ease);
+          }),
     );
   }
 
-  /**
-   * Tab对应视图
-   */
-  _renderTabContent(TabBarStateModel model) {
-    return IndexedStack(
-      index: model.tabBarCurrentIndex,
-      children: <Widget>[
-        Center(child: new Text("Main")),
-        Center(child: new Text("Hello")),
-        Center(child: new Text("Pop")),
-        Center(child: new Text("Mine")),
-      ],
-    );
-  }
-
-  /**
-   * TabBar
-   */
-  _renderBottomNavigationBar(TabBarStateModel model) {
-    return BottomNavigationBar(
-      items: _renderTabBarItem(model.tabBarCurrentIndex),
-      onTap: (index) => model.changeTabBarCurrentIndex(index),
-      currentIndex: model.tabBarCurrentIndex,
-      type: BottomNavigationBarType.fixed,
-    );
-  }
-
-  /**
-   * TabBarItem
-   */
-  List<BottomNavigationBarItem> _renderTabBarItem(int currentIndex) {
-    return [
-      BottomNavigationBarItem(icon: _getTabBarItemIcon(0, currentIndex),
-          title: _getTabBarItemText(0, currentIndex)),
-      BottomNavigationBarItem(icon: _getTabBarItemIcon(1, currentIndex),
-          title: _getTabBarItemText(1, currentIndex)),
-      BottomNavigationBarItem(icon: _getTabBarItemIcon(2, currentIndex),
-          title: _getTabBarItemText(2, currentIndex)),
-      BottomNavigationBarItem(icon: _getTabBarItemIcon(3, currentIndex),
-          title: _getTabBarItemText(3, currentIndex)),
-    ];
-  }
-
-  /**
-   * TabBar图标
-   */
-  _getTabBarIcon(String path, Color color) {
-    return Image.asset(path, width: 25.0, height: 25.0, color: color);
-  }
-
-  /**
-   *  TabBar图标
-   */
-  Image _getTabBarItemIcon(index, currentIndex) {
-    if (currentIndex == index) {
-      return _getTabBarIcon(tabIcon[index][1], Theme
-          .of(context)
-          .primaryColor);
+  Widget _renderRow(BuildContext context, int index) {
+    if (index == 0) {
+      return Container(
+        height: 200,
+        color: Colors.green,
+        child: new BannerWidget(),
+      );
     }
-    return _getTabBarIcon(tabIcon[index][0], null);
-  }
 
-  /**
-   * TabBar文字
-   */
-  Text _getTabBarItemText(index, currentIndex) {
-    return Text(
-        tabTitle[index], style: TextStyle(color: index == currentIndex ? Theme
-        .of(context)
-        .primaryColor : Color.fromARGB(255, 192, 193, 195)));
+    if (index < _datas.length - 1) {
+      return new InkWell(
+        onTap: ()  {
+           Navigator.of(context).push(new MaterialPageRoute(builder: (context) {
+            return new WebViewPage(
+                title: _datas[index - 1].title, url: _datas[index - 1].link);
+          }));
+
+        },
+        child: Column(
+          children: <Widget>[
+            Container(
+              color: Colors.white,
+              padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+              child: Row(
+                children: <Widget>[
+                  Text(
+                    _datas[index - 1].author,
+                    style: TextStyle(fontSize: 12),
+                    textAlign: TextAlign.left,
+                  ),
+                  Expanded(
+                    child: Text(
+                      _datas[index - 1].niceDate,
+                      style: TextStyle(fontSize: 12),
+                      textAlign: TextAlign.right,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              color: Colors.white,
+              padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Text(
+                      _datas[index - 1].title,
+                      maxLines: 2,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF3D4E5F),
+                      ),
+                      textAlign: TextAlign.left,
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Container(
+              color: Colors.white,
+              padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Text(
+                      _datas[index - 1].superChapterName,
+                      style: TextStyle(fontSize: 12),
+                      textAlign: TextAlign.left,
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    return null;
   }
 
   @override
   void dispose() {
     super.dispose();
+    _scrollController.dispose();
+  }
+
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  void onClickErrorWidget() {
+    showloading();
+    getData();
   }
 }
-
-
-

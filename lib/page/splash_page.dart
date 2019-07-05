@@ -1,18 +1,19 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:flukit/flukit.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mylove/config/application.dart';
+import 'package:mylove/constant/color_constant.dart';
 import 'package:mylove/constant/common.dart';
 import 'package:mylove/model/splash_model.dart';
-import 'package:mylove/res/color_constant.dart';
 import 'package:mylove/route/routes.dart';
-import 'package:mylove/util/http_util.dart';
 import 'package:mylove/util/image_util.dart';
-import 'package:mylove/util/sp_helper.dart';
 import 'package:mylove/util/sp_util.dart';
 import 'package:rxdart/rxdart.dart';
 
+///
+/// splash界面
+///
 class SplashPage extends StatefulWidget {
   String title;
 
@@ -22,7 +23,6 @@ class SplashPage extends StatefulWidget {
   State<StatefulWidget> createState() {
     return SplashPageState();
   }
-
 }
 
 class SplashPageState extends State<SplashPage> {
@@ -42,7 +42,6 @@ class SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
-    _loadSplashData();
     _initAsync();
   }
 
@@ -78,7 +77,6 @@ class SplashPageState extends State<SplashPage> {
                 ),
                 children: _bannerList),
           ),
-          //    _buildAdWidget(),
           new Offstage(
             offstage: !(_status == 1),
             child: new Container(
@@ -86,6 +84,7 @@ class SplashPageState extends State<SplashPage> {
               margin: EdgeInsets.all(20.0),
               child: InkWell(
                 onTap: () {
+                  Fluttertoast.showToast(msg: "click");
                   _goMain();
                 },
                 child: new Container(
@@ -108,66 +107,12 @@ class SplashPageState extends State<SplashPage> {
     );
   }
 
-  Widget _buildAdWidget() {
-    if (_splashModel == null) {
-      return new Container(
-        height: 0.0,
-      );
-    }
-    return new Offstage(
-      offstage: !(_status == 1),
-      child: new InkWell(
-        onTap: () {
-          if (ObjectUtil.isEmpty(_splashModel.url)) return;
-          _goMain();
-//          NavigatorUtil.pushWeb(context,
-//              title: _splashModel.title, url: _splashModel.url);
-        },
-        child: new Container(
-          alignment: Alignment.center,
-          child: new CachedNetworkImage(
-            width: double.infinity,
-            height: double.infinity,
-            fit: BoxFit.fill,
-            imageUrl: _splashModel.imgUrl,
-            placeholder: (context, url) => _buildSplashBg(),
-            errorWidget: (context, url, error) => _buildSplashBg(),
-          ),
-        ),
-      ),
-    );
-  }
-
-  ///加载Splash页面数据
-  ///
-  void _loadSplashData() {
-    _splashModel = SpHelper.getObject(Constant.key_splash_model);
-    if (_splashModel != null) {
-      setState(() {});
-    }
-    HttpUtil httpUtil = new HttpUtil();
-    httpUtil.getSplash().then((model) {
-      if (!ObjectUtil.isEmpty(model.imgUrl)) {
-        if (_splashModel == null || (_splashModel.imgUrl != model.imgUrl)) {
-          SpHelper.putObject(Constant.key_splash_model, model);
-          setState(() {
-            _splashModel = model;
-          });
-        }
-      } else {
-        SpHelper.putObject(Constant.key_splash_model, null);
-      }
-    });
-  }
-
   Future _initAsync() async {
     await SpUtil.getInstance();
-    _loadSplashData();
     Observable.just(1).delay(new Duration(milliseconds: 500)).listen((_) {
-//      SpUtil.putBool(Constant.key_guide, false);
       if (SpUtil.getBool(Constant.key_guide, defValue: true) &&
           ObjectUtil.isNotEmpty(_guideList)) {
-        SpUtil.putBool(Constant.key_guide, false);
+        // SpUtil.putBool(Constant.key_guide, false);
         _initBanner();
       } else {
         _initSplash();
@@ -187,7 +132,7 @@ class SplashPageState extends State<SplashPage> {
     setState(() {
       _status = 1;
     });
-    _timerUtil = new TimerUtil(mTotalTime: 3 * 1000);
+    _timerUtil = new TimerUtil(mTotalTime: _count * 1000);
     _timerUtil.setOnTimerTickCallback((int tick) {
       double _tick = tick / 1000;
       setState(() {
@@ -207,6 +152,9 @@ class SplashPageState extends State<SplashPage> {
     });
   }
 
+  /**
+   * 初始化Banner数据
+   */
   void _initBannerData() {
     for (int i = 0, length = _guideList.length; i < length; i++) {
       if (i == length - 1) {
@@ -224,6 +172,7 @@ class SplashPageState extends State<SplashPage> {
                 margin: EdgeInsets.only(bottom: 160.0),
                 child: new InkWell(
                   onTap: () {
+                    Fluttertoast.showToast(msg: "click");
                     _goMain();
                   },
                   child: new CircleAvatar(
@@ -255,16 +204,13 @@ class SplashPageState extends State<SplashPage> {
   }
 
   void _goMain() {
-    //NavigatorUtil.navigatorToMain(context);
-    Application.navigateTo(context: context, route: "${Routes.HOME_PAGE}");
+    Application.navigateTo(context: context, route: "${Routes.MAIN_PAGE}");
   }
 
   @override
   void dispose() {
     super.dispose();
-    if (_timerUtil != null) {
-      _timerUtil.cancel();
-    }
+    _timerUtil?.cancel();
   }
 }
 
