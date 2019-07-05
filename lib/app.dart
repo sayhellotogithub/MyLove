@@ -5,6 +5,7 @@ import 'package:mylove/constant/theme.dart';
 import 'package:mylove/eventbus/event_bus.dart';
 import 'package:mylove/generated/i18n.dart';
 import 'package:mylove/model/state_model/main_state_model.dart';
+import 'package:mylove/page/loading_page.dart';
 import 'package:mylove/page/splash_page.dart';
 import 'package:mylove/route/router.dart';
 import 'package:mylove/route/routes.dart';
@@ -71,7 +72,7 @@ class _AppState extends State<App> {
 
               home: Builder(builder: (BuildContext context) {
                 return Localizations.override(
-                    context: context, locale: _locale, child: SplashPage());
+                    context: context, locale: _locale, child: LoadingPage());
               },),
               // onGenerateRoute: Application.router.generator,
             );

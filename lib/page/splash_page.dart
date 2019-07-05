@@ -84,7 +84,6 @@ class SplashPageState extends State<SplashPage> {
               margin: EdgeInsets.all(20.0),
               child: InkWell(
                 onTap: () {
-                  Fluttertoast.showToast(msg: "click");
                   _goMain();
                 },
                 child: new Container(
@@ -109,10 +108,10 @@ class SplashPageState extends State<SplashPage> {
 
   Future _initAsync() async {
     await SpUtil.getInstance();
-    Observable.just(1).delay(new Duration(milliseconds: 500)).listen((_) {
+    Observable.just(1).delay(new Duration(milliseconds: 1000)).listen((_) {
       if (SpUtil.getBool(Constant.key_guide, defValue: true) &&
           ObjectUtil.isNotEmpty(_guideList)) {
-        // SpUtil.putBool(Constant.key_guide, false);
+        SpUtil.putBool(Constant.key_guide, false);
         _initBanner();
       } else {
         _initSplash();
@@ -121,11 +120,7 @@ class SplashPageState extends State<SplashPage> {
   }
 
   void _initSplash() {
-    if (_splashModel == null) {
-      _goMain();
-    } else {
-      _doCountDown();
-    }
+    _doCountDown();
   }
 
   void _doCountDown() {

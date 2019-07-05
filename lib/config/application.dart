@@ -9,9 +9,17 @@ class Application {
   static Router router;
   static EventBus eventBus;
 
-  static navigateTo(
-      { @required BuildContext context, @required String route, transition = TransitionType
-          .inFromRight }) {
-    router.navigateTo(context, route, transition: transition);
+  static navigateTo({ @required BuildContext context, @required String route,
+    bool replace = false,
+    bool clearStack = false,
+    TransitionType transition = TransitionType
+        .inFromRight,
+    Duration transitionDuration = const Duration(milliseconds: 250),
+    RouteTransitionsBuilder transitionBuilder}) {
+    router.navigateTo(context, route, replace: replace,
+        clearStack: clearStack,
+        transition: transition,
+        transitionDuration: transitionDuration,
+        transitionBuilder: transitionBuilder);
   }
 }

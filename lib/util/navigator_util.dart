@@ -19,7 +19,9 @@ class NavigatorUtil {
   static void pushReplacementNamed(BuildContext context, String routeName) {
     Navigator.of(context).pushReplacementNamed(routeName);
   }
+ static void pushAndRemoveUntil(BuildContext context,String routeName){
 
+ }
   static void navigatorToMain(BuildContext context) {
     Navigator.of(context).push(new CupertinoPageRoute<void>(builder: (ctx)
     =>
