@@ -1,5 +1,4 @@
-
-final List<String> tabTitle = ["首页1", "精选", "电影", "我"];
+final List<String> tabTitle = ["博客", "音乐", "视频", "我"];
 final List<List<String>> tabIcon = [
   [
     "assets/images/icon_home_tab.png",
