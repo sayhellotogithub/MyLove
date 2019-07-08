@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:mylove/componment/webview_page.dart';
 import 'package:mylove/http/api_service.dart';
 import 'package:mylove/model/banner_model.dart';
-import 'package:flutter_swiper/flutter_swiper.dart';
 
 
 class BannerWidget extends StatefulWidget {
@@ -23,12 +23,10 @@ class BannerWidgetState extends State<BannerWidget> {
   }
 
   Future<Null> _getBanner() {
-    ApiService().getBanner((BannerModel _bannerModel) {
-      if (_bannerModel.data.length > 0) {
-        setState(() {
-          _bannerList = _bannerModel.data;
-        });
-      }
+    ApiService().getBanner((List<BannerData> _bannerModel) {
+      setState(() {
+        _bannerList = _bannerModel;
+      });
     });
   }
 

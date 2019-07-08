@@ -1,8 +1,9 @@
 import 'dart:convert' show json;
 
 import 'package:mylove/model/base_model.dart';
+import 'package:mylove/model/list_model.dart';
 
-class ArticleModel extends BaseModel<Data> {
+class ArticleModel extends BaseModel<ListModel<Article>> {
 
   ArticleModel.fromParams({errorCode, errorMsg, data});
 
@@ -10,51 +11,15 @@ class ArticleModel extends BaseModel<Data> {
       jsonStr == null ? null : jsonStr is String ? new ArticleModel.fromJson(
           json.decode(jsonStr)) : new ArticleModel.fromJson(jsonStr);
 
-  ArticleModel.fromJson(jsonRes) {
-    errorCode = jsonRes['errorCode'];
-    errorMsg = jsonRes['errorMsg'];
-    data = jsonRes['data'] == null ? null : new Data.fromJson(jsonRes['data']);
-  }
-
-  @override
-  String toString() {
-    return '{"errorCode": $errorCode,"errorMsg": ${errorMsg != null ? '${json
-        .encode(errorMsg)}' : 'null'},"data": $data}';
+  ArticleModel.fromJson(jsonRes){
+    BaseModel.jsonToModel(this, jsonRes);
+    data = jsonRes["data"]["data"] == null ? null : new ListModel.fromJson(
+        jsonRes["data"]["data"], (item) {
+      return item == null ? null : new Article.fromJson(item);
+    });
   }
 }
 
-class Data {
-
-  int curPage;
-  int offset;
-  int pageCount;
-  int size;
-  int total;
-  bool over;
-  List<Article> datas;
-
-  Data.fromParams(
-      {this.curPage, this.offset, this.pageCount, this.size, this.total, this.over, this.datas});
-
-  Data.fromJson(jsonRes) {
-    curPage = jsonRes['curPage'];
-    offset = jsonRes['offset'];
-    pageCount = jsonRes['pageCount'];
-    size = jsonRes['size'];
-    total = jsonRes['total'];
-    over = jsonRes['over'];
-    datas = jsonRes['datas'] == null ? null : [];
-
-    for (var datasItem in datas == null ? [] : jsonRes['datas']) {
-      datas.add(datasItem == null ? null : new Article.fromJson(datasItem));
-    }
-  }
-
-  @override
-  String toString() {
-    return '{"curPage": $curPage,"offset": $offset,"pageCount": $pageCount,"size": $size,"total": $total,"over": $over,"datas": $datas}';
-  }
-}
 
 class Article {
 

@@ -4,7 +4,6 @@
 
 #import "GeneratedPluginRegistrant.h"
 #import <flutter_webview_plugin/FlutterWebviewPlugin.h>
-#import <fluttertoast/FluttertoastPlugin.h>
 #import <intro_slider/IntroSliderPlugin.h>
 #import <path_provider/PathProviderPlugin.h>
 #import <share/SharePlugin.h>
@@ -15,7 +14,6 @@
 
 + (void)registerWithRegistry:(NSObject<FlutterPluginRegistry>*)registry {
   [FlutterWebviewPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterWebviewPlugin"]];
-  [FluttertoastPlugin registerWithRegistrar:[registry registrarForPlugin:@"FluttertoastPlugin"]];
   [IntroSliderPlugin registerWithRegistrar:[registry registrarForPlugin:@"IntroSliderPlugin"]];
   [FLTPathProviderPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTPathProviderPlugin"]];
   [FLTSharePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTSharePlugin"]];

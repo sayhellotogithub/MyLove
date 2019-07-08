@@ -6,5 +6,7 @@ class Constant {
   //是否跳过引导页
   static const String has_skip_key_guide = 'has_skip_key_guide';
   static const String has_skip = "hasSkip";
+  static const String access_Token = 'accessToken';
+  static const String refresh_Token = 'refreshToken';
 
 }

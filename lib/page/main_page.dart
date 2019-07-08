@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mylove/constant/index_tab.dart';
 import 'package:mylove/generated/i18n.dart';
 import 'package:mylove/model/state_model/tab_state_model.dart';
 import 'package:mylove/page/home/home_page.dart';
+import 'package:mylove/util/toast.dart';
+import 'package:oktoast/oktoast.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class MainPage extends StatefulWidget {
@@ -41,19 +42,14 @@ class MainPageState extends State<MainPage>
         .millisecondsSinceEpoch;
     if (nowExitTime - lastExitTime > 2000) {
       lastExitTime = nowExitTime;
-      Fluttertoast.showToast(
-          msg: S
-              .of(context)
-              .press_again_exit,
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIos: 1,
+      Toast.show(S
+          .of(context)
+          .press_again_exit,
+          context: context,
           backgroundColor: Theme
               .of(context)
-              .primaryColor,
-          textColor: Colors.white,
-          fontSize: 16.0
-      );
+              .primaryColor, position: ToastPosition.bottom,
+          textStyle: new TextStyle(fontSize: 16.0, color: Colors.white));
       return await Future.value(false);
     }
     return await Future.value(true);

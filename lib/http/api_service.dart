@@ -1,28 +1,30 @@
 import 'package:dio/dio.dart';
 import 'package:mylove/config/user.dart';
-import 'package:mylove/http/dio_manager.dart';
+import 'package:mylove/http/dio_utils.dart';
 import 'package:mylove/model/article_model.dart';
 import 'package:mylove/model/banner_model.dart';
 
 import 'api.dart';
 
 class ApiService {
+
   void getBanner(Function callback) async {
-    DioManager.singleton.dio
-        .get(Api.HOME_BANNER, options: _getOptions())
-        .then((response) {
-      callback(BannerModel(response.data));
+    DioUtils.instance.requestNetwork(
+        Method.get, Api.HOME_BANNER, onSuccess: (data) {
+      var result = BannerModel.fromJson(data);
+      callback(result.data);
     });
   }
 
   void getArticleList(Function callback, Function errorback, int _page) async {
-    DioManager.singleton.dio
-        .get(Api.HOME_ARTICLE_LIST + "$_page/json", options: _getOptions())
-        .then((response) {
-      callback(ArticleModel(response.data));
-    }).catchError((e) {
-      errorback(e);
-    });
+    DioUtils.instance.requestNetwork(
+        Method.get, Api.HOME_ARTICLE_LIST + "$_page/json", onSuccess: (data) {
+      var result = ArticleModel.fromJson(data);
+      callback(result.data);
+    },
+        onError: (code, msg) {
+          errorback();
+        });
   }
 
 

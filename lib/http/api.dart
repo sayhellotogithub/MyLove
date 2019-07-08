@@ -1,7 +1,8 @@
 class Api {
-  static const String HOME_BANNER = "https://www.wanandroid.com/banner/json";
+  static const String BASE_HTTP = "https://www.wanandroid.com/";
+  static const String HOME_BANNER = "banner/json";
 
-  static const String HOME_ARTICLE_LIST = "https://www.wanandroid.com/article/list/";
+  static const String HOME_ARTICLE_LIST = "article/list/";
 
   //知识体系
   static const String SYSTEM_TREE = "https://www.wanandroid.com/tree/json";

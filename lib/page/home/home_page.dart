@@ -1,11 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mylove/base/base_widget.dart';
 import 'package:mylove/componment/webview_page.dart';
 import 'package:mylove/http/api_service.dart';
 import 'package:mylove/model/article_model.dart';
+import 'package:mylove/model/list_model.dart';
 import 'package:mylove/page/home/banner.dart';
+import 'package:mylove/util/toast.dart';
 
 class HomePage extends BaseWidget {
   @override
@@ -16,6 +17,7 @@ class HomePage extends BaseWidget {
 
 class HomePageState extends BaseWidgetState<HomePage> {
   List<Article> _datas = new List();
+
   //listview控制器
   ScrollController _scrollController = ScrollController();
   bool showToTopBtn = false; //是否显示“返回到顶部”按钮
@@ -51,22 +53,18 @@ class HomePageState extends BaseWidgetState<HomePage> {
   //获取文章列表数据
   Future<Null> getData() async {
     _page = 0;
-    ApiService().getArticleList((ArticleModel _articleModel) {
-      if (_articleModel.errorCode == 0) {
-        //成功
-        if (_articleModel.data.datas.length > 0) {
-          //有数据
-          showContent();
-          setState(() {
-            _datas.clear();
-            _datas.addAll(_articleModel.data.datas);
-          });
-        } else {
-          //数据为空
-          showEmpty();
-        }
+    ApiService().getArticleList((ListModel<Article> _articleModel) {
+      //成功
+      if (_articleModel.datas.length > 0) {
+        //有数据
+        showContent();
+        setState(() {
+          _datas.clear();
+          _datas.addAll(_articleModel.datas);
+        });
       } else {
-        Fluttertoast.showToast(msg: _articleModel.errorMsg);
+        //数据为空
+        showEmpty();
       }
     }, (DioError error) {
       //发生错误
@@ -80,21 +78,17 @@ class HomePageState extends BaseWidgetState<HomePage> {
   //加载更多的数据
   Future<Null> _getMore() async {
     _page++;
-    ApiService().getArticleList((ArticleModel _articleModel) {
-      if (_articleModel.errorCode == 0) {
-        //成功
-        if (_articleModel.data.datas.length > 0) {
-          //有数据
-          showContent();
-          setState(() {
-            _datas.addAll(_articleModel.data.datas);
-          });
-        } else {
-          //数据为空
-          Fluttertoast.showToast(msg: "没有更多数据了");
-        }
+    ApiService().getArticleList((ListModel<Article> _articleModel) {
+      //成功
+      if (_articleModel.datas.length > 0) {
+        //有数据
+        showContent();
+        setState(() {
+          _datas.addAll(_articleModel.datas);
+        });
       } else {
-        Fluttertoast.showToast(msg: _articleModel.errorMsg);
+        //数据为空
+        Toast.show("没有更多数据了");
       }
     }, (DioError error) {
       //发生错误
@@ -154,12 +148,11 @@ class HomePageState extends BaseWidgetState<HomePage> {
 
     if (index < _datas.length - 1) {
       return new InkWell(
-        onTap: ()  {
-           Navigator.of(context).push(new MaterialPageRoute(builder: (context) {
+        onTap: () {
+          Navigator.of(context).push(new MaterialPageRoute(builder: (context) {
             return new WebViewPage(
                 title: _datas[index - 1].title, url: _datas[index - 1].link);
           }));
-
         },
         child: Column(
           children: <Widget>[

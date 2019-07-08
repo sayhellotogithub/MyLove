@@ -10,20 +10,17 @@ class BannerModel extends BaseModel<List<BannerData>> {
       jsonStr == null ? null : jsonStr is String ? new BannerModel.fromJson(
           json.decode(jsonStr)) : new BannerModel.fromJson(jsonStr);
 
-  BannerModel.fromJson(jsonRes) {
-    errorCode = jsonRes['errorCode'];
-    errorMsg = jsonRes['errorMsg'];
-    data = jsonRes['data'] == null ? null : [];
-
-    for (var dataItem in data == null ? [] : jsonRes['data']) {
-      data.add(dataItem == null ? null : new BannerData.fromJson(dataItem));
-    }
+  BannerModel.fromJson(jsonRes){
+    BaseModel.jsonToModel(this, jsonRes);
+    BaseModel.jsonToList(this, jsonRes, (dataItem) {
+      return dataItem == null ? null : new BannerData.fromJson(dataItem);
+    });
   }
 
   @override
   String toString() {
-    return '{"errorCode": $errorCode,"errorMsg": ${errorMsg != null ? '${json
-        .encode(errorMsg)}' : 'null'},"data": $data}';
+    return '{"code": $code,"errorMsg": ${msg != null ? '${json
+        .encode(msg)}' : 'null'},"data": $data}';
   }
 }
 
