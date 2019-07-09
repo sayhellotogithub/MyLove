@@ -1,27 +1,21 @@
 import 'package:dio/dio.dart';
 import 'package:mylove/http/dio_utils.dart';
+import 'package:mylove/mvp/i_lifecycle.dart';
+import 'package:mylove/mvp/i_lifecycle.dart';
 import 'package:mylove/mvp/i_presenter.dart';
 import 'package:mylove/mvp/i_view.dart';
 
 
-class BasePagePresenter<V extends IView> extends IPresenter {
+class BasePresenter<V extends IView> extends IPresenter {
 
   V view;
 
   CancelToken _cancelToken;
 
-  BasePagePresenter() {
+  BasePresenter() {
     _cancelToken = CancelToken();
   }
 
-  @override
-  void deactivate() {}
-
-  @override
-  void didChangeDependencies() {}
-
-  @override
-  void didUpdateWidgets<W>(W oldWidget) {}
 
   @override
   void dispose() {
@@ -29,9 +23,6 @@ class BasePagePresenter<V extends IView> extends IPresenter {
       _cancelToken.cancel();
     }
   }
-
-  @override
-  void initState() {}
 
   void requestNetwork<T>(Method method, String url,
       {Function(T t) onSuccess, Function(List<
@@ -50,12 +41,6 @@ class BasePagePresenter<V extends IView> extends IPresenter {
             onSuccess(data);
           }
         },
-//        onSuccessList: (data) {
-//          view.closeProgress();
-//          if (onSuccessList != null) {
-//            onSuccessList(data);
-//          }
-//        },
         onError: (code, msg) {
           view.closeProgress();
           if (msg.isNotEmpty) {
@@ -66,5 +51,31 @@ class BasePagePresenter<V extends IView> extends IPresenter {
           }
         }
     );
+  }
+
+  @override
+  void attachView(IView view) {
+    this.view = view;
+  }
+
+  @override
+  void detachView() {
+    this.view = null;
+  }
+
+  @override
+  void deactivate() {
+  }
+
+  @override
+  void didChangeDependencies() {
+  }
+
+  @override
+  void didUpdateWidgets<W>(W oldWidget) {
+  }
+
+  @override
+  void initState() {
   }
 }

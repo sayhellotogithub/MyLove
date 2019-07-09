@@ -16,11 +16,12 @@ class ApiService {
     });
   }
 
-  void getArticleList(Function callback, Function errorback, int _page) async {
+  void getArticleList(int _page,
+      {Function errorback, Function successCallBack}) async {
     DioUtils.instance.requestNetwork(
         Method.get, Api.HOME_ARTICLE_LIST + "$_page/json", onSuccess: (data) {
       var result = ArticleModel.fromJson(data);
-      callback(result.data);
+      successCallBack(result.data);
     },
         onError: (code, msg) {
           errorback();
